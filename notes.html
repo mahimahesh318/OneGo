@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>📝 OneGo – Notes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --main-bg: #ffffff;
+      --main-text: #000000;
+      --accent: #ffde00;
+      --card-bg: #f7f7f7;
+      --button-bg: #000000;
+      --button-text: #ffffff;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--main-bg);
+      color: var(--main-text);
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .note-form {
+      max-width: 600px;
+      margin: auto;
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.05);
+    }
+
+    .note-form input,
+    .note-form textarea {
+      width: 95%;
+      padding: 10px 15px;
+      margin-bottom: 15px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .note-form button {
+      background-color: var(--button-bg);
+      color: var(--button-text);
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .note-form button:hover {
+      background-color: #222;
+    }
+
+    .notes-container {
+      max-width: 1000px;
+      margin: 40px auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .note-card {
+      background-color: var(--card-bg);
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .note-card h3 {
+      margin: 0 0 10px;
+      font-size: 1.2rem;
+      color: var(--main-text);
+    }
+
+    .note-card p {
+      flex-grow: 1;
+      margin-bottom: 15px;
+    }
+
+    .note-actions {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .note-actions button {
+      background-color: var(--accent);
+      color: #000;
+      border: none;
+      padding: 6px 12px;
+      font-size: 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .note-actions button:hover {
+      background-color: #f0c700;
+    }
+
+    @media (max-width: 600px) {
+      .note-form {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📝 OneGo – Notes</h1>
+
+  <div class="note-form">
+    <input type="text" id="noteTitle" placeholder="Note Title" />
+    <textarea id="noteContent" rows="4" placeholder="Your note here..."></textarea>
+    <button onclick="saveNote()">Save Note</button>
+  </div>
+
+  <div class="notes-container" id="notesContainer">
+    <!-- Notes will appear here -->
+  </div>
+
+  <script>
+    let editIndex = -1;
+
+    function getNotes() {
+      return JSON.parse(localStorage.getItem("onego_notes") || "[]");
+    }
+
+    function setNotes(notes) {
+      localStorage.setItem("onego_notes", JSON.stringify(notes));
+    }
+
+    function renderNotes() {
+      const notes = getNotes();
+      const container = document.getElementById("notesContainer");
+      container.innerHTML = "";
+
+      notes.forEach((note, index) => {
+        const card = document.createElement("div");
+        card.className = "note-card";
+        card.innerHTML = `
+          <h3>${note.title}</h3>
+          <p>${note.content}</p>
+          <div class="note-actions">
+            <button onclick="editNote(${index})">✏️ Edit</button>
+            <button onclick="deleteNote(${index})">🗑️ Delete</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function saveNote() {
+      const title = document.getElementById("noteTitle").value.trim();
+      const content = document.getElementById("noteContent").value.trim();
+
+      if (!title || !content) {
+        alert("Please fill in both fields.");
+        return;
+      }
+
+      let notes = getNotes();
+
+      if (editIndex > -1) {
+        notes[editIndex] = { title, content };
+        editIndex = -1;
+      } else {
+        notes.push({ title, content });
+      }
+
+      setNotes(notes);
+      renderNotes();
+      document.getElementById("noteTitle").value = "";
+      document.getElementById("noteContent").value = "";
+    }
+
+    function editNote(index) {
+      const notes = getNotes();
+      document.getElementById("noteTitle").value = notes[index].title;
+      document.getElementById("noteContent").value = notes[index].content;
+      editIndex = index;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function deleteNote(index) {
+      let notes = getNotes();
+      if (confirm("Are you sure you want to delete this note?")) {
+        notes.splice(index, 1);
+        setNotes(notes);
+        renderNotes();
+      }
+    }
+
+    renderNotes();
+  </script>
+
+</body>
+</html>
