@@ -22,6 +22,9 @@
 
 ---
 
+https://github.com/user-attachments/assets/08633860-1851-49d0-af3c-bc3fa687ad5d
+
+
 ## 💻 How to Run This Project Locally
 
 > No npm, no build tools — it’s just HTML, CSS, and JS!
@@ -33,5 +36,3 @@ git clone https://github.com/your-username/onego.git
 2. Add Your API keys
 Update the results.html with your own API Keys.[YT_API_KEY, CSE_API_KEY and CSE_ID]
 
-
-https://github.com/user-attachments/assets/08633860-1851-49d0-af3c-bc3fa687ad5d
